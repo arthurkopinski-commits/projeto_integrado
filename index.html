@@ -12,99 +12,60 @@
             justify-content: center;
             align-items: center;
             height: 100vh; /* Tela inteira */
+            margin: 0;
         }
         
-        /* Apenas cores temporárias para enxergarmos as caixas */
-        .arena { background-color: #16213e; padding: 20px; }
-        .mao-aliado { border: 2px solid green; }
-        .tabuleiro { border: 2px solid blue; }
-        .mao-inimigo { border: 2px solid red; }
-    </style>
-</head>
-<body>
-    <!-- A CAIXA PAI (Onde tudo acontece) -->
-    <div class="arena">
-        
-        <div class="mao-aliado">
-            Mão Esquerda (Em breve 5 cartas)
-        </div>
-
-        <div class="tabuleiro">
-            Mesa Central (Em breve 9 espaços)
-        </div>
-
-        <div class="mao-inimigo">
-            Mão Direita (Em breve 5 cartas)
-        </div>
-
-    </div>
-</body>
-</html>
+        /* A CAIXA PAI (Onde tudo acontece) */
         .arena { 
             background-color: #16213e; 
             padding: 30px; 
             border-radius: 15px;
-            
-            /* O SEGREDO DO ARQUITETO */
             display: grid;
-            /* Eu quero 3 colunas: A primeira com 150px, a do meio com 450px e a última com 150px */
+            /* 3 colunas: esquerda (aliado), centro (tabuleiro), direita (inimigo) */
             grid-template-columns: 150px 450px 150px;
-            gap: 40px; /* Um corredor de 40px separando as colunas */
-        }        <div class="mao-aliado">
-            <div class="carta">Carta 1</div>
-            <div class="carta">Carta 2</div>
-            <div class="carta">Carta 3</div>
-            <div class="carta">Carta 4</div>
-            <div class="carta">Carta 5</div>
-        </div>
+            gap: 40px; /* Corredor separando as colunas */
+            height: 80vh;
+        }        
 
-        <!-- Pule o tabuleiro por enquanto... e faça o mesmo no inimigo -->
-
-        <div class="mao-inimigo">
-            <div class="carta inimigo">Inimigo 1</div>
-            <div class="carta inimigo">Inimigo 2</div>
-            <div class="carta inimigo">Inimigo 3</div>
-            <div class="carta inimigo">Inimigo 4</div>
-            <div class="carta inimigo">Inimigo 5</div>
-        </div>        /* Transformando a Mão em um Grid de 5 linhas */
+        /* Transformando a Mão em um Grid de 5 linhas */
         .mao-aliado, .mao-inimigo {
             display: grid;
             grid-template-rows: repeat(5, 1fr); /* 5 linhas dividindo a altura por igual */
             gap: 15px;
-            border: none; /* Tirando a borda feia do Passo 1 */
         }
 
         /* Desenhando a Carta */
         .carta {
-            background-color: #0f3460;
-            border: 2px dashed #4CAF50; /* Borda Verde Tracejada */
+            background-size: cover; /* Faz a foto preencher a carta toda */
+            background-position: center;
+            border: 2px solid #4CAF50; /* Borda Verde */
             border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
+            color: transparent; /* Esconde o texto provisório */
+            cursor: pointer;
+            transition: transform 0.2s; /* Animação suave */
+        }
+        
+        /* Efeito de Hover (passar o mouse) */
+        .carta:hover {
+            transform: scale(1.1); /* A carta cresce um pouquinho! */
+            border-color: yellow;
         }
 
         /* Cartas do Inimigo ficam vermelhas */
         .inimigo {
             border-color: #e94560;
-            color: #e94560;
-        }        <div class="tabuleiro">
-            <div class="slot">Mesa</div>
-            <div class="slot">Mesa</div>
-            <div class="slot">Mesa</div>
-            <div class="slot">Mesa</div>
-            <div class="slot">Mesa</div>
-            <div class="slot">Mesa</div>
-            <div class="slot">Mesa</div>
-            <div class="slot">Mesa</div>
-            <div class="slot">Mesa</div>
-        </div>        .tabuleiro {
+        }
+
+        /* Estrutura do Tabuleiro */
+        .tabuleiro {
             display: grid;
-            /* Magia Pura: 3 colunas iguais, 3 linhas fluidas iguais */
+            /* 3 colunas iguais, 3 linhas fluidas iguais */
             grid-template-columns: repeat(3, 1fr); 
             grid-template-rows: repeat(3, 1fr);
             gap: 10px;
-            
             background-color: #0d1b2a;
             border: 3px solid #e94560;
             border-radius: 10px;
@@ -121,8 +82,86 @@
             transition: 0.3s;
         }
 
-        /* Efeito ao passar o mouse */
+        /* Efeito ao passar o mouse nos slots */
         .slot:hover {
             background-color: #4CAF50;
             cursor: pointer;
-        }
+        }       
+    </style>
+</head>
+<body>
+
+    <div class="arena">
+        
+        <!-- Mão do Aliado (Preenchida via JavaScript) -->
+        <div class="mao-aliado"></div>
+
+        <!-- Mesa Central -->
+        <div class="tabuleiro">
+            <div class="slot">Mesa</div>
+            <div class="slot">Mesa</div>
+            <div class="slot">Mesa</div>
+            <div class="slot">Mesa</div>
+            <div class="slot">Mesa</div>
+            <div class="slot">Mesa</div>
+            <div class="slot">Mesa</div>
+            <div class="slot">Mesa</div>
+            <div class="slot">Mesa</div>
+        </div>
+
+        <!-- Mão do Inimigo (Preenchida via JavaScript) -->
+        <div class="mao-inimigo"></div>
+
+    </div>
+
+    <!-- CÉREBRO DO JOGO -->
+    <script>
+        // Banco de Dados de Animais Aliados (Imagens reais atualizadas)
+        const bancoDeCartasAliadas = [
+            { id: 1, nome: "Urso Alpha", forca: 8, img: "https://unsplash.com" },
+            { id: 2, nome: "Urso Beta", forca: 9, img: "https://unsplash.com" },
+            { id: 3, nome: "Urso Charlie", forca: 5, img: "https://unsplash.com" },
+            { id: 4, nome: "Urso Delta", forca: 6, img: "https://unsplash.com" },
+            { id: 5, nome: "Urso Echo", forca: 7, img: "https://unsplash.com" }
+        ];
+
+        // Banco de Dados de Animais Inimigos
+        const bancoDeCartasInimigas = [
+            { id: 6, nome: "Urso Rival 1", forca: 6, img: "https://unsplash.com" },
+            { id: 7, nome: "Urso Rival 2", forca: 7, img: "https://unsplash.com" },
+            { id: 8, nome: "Urso Rival 3", forca: 8, img: "https://unsplash.com" },
+            { id: 9, nome: "Urso Rival 4", forca: 5, img: "https://unsplash.com" },
+            { id: 10, nome: "Urso Rival 5", forca: 9, img: "https://unsplash.com" }
+        ];
+
+        const maoAliado = document.querySelector('.mao-aliado');
+        const maoInimigo = document.querySelector('.mao-inimigo');
+
+        // Renderizar cartas aliadas
+        bancoDeCartasAliadas.forEach(cartaDado => {
+            let cartaElemento = document.createElement('div');
+            cartaElemento.classList.add('carta');
+            cartaElemento.style.backgroundImage = `url(${cartaDado.img})`;
+            
+            cartaElemento.addEventListener('click', () => {
+                alert("Você clicou na carta aliada: " + cartaDado.nome + " com força " + cartaDado.forca);
+            });
+
+            maoAliado.appendChild(cartaElemento);
+        });
+
+        // Renderizar cartas inimigas (borda vermelha e classe inimigo)
+        bancoDeCartasInimigas.forEach(cartaDado => {
+            let cartaElemento = document.createElement('div');
+            cartaElemento.classList.add('carta', 'inimigo');
+            cartaElemento.style.backgroundImage = `url(${cartaDado.img})`;
+            
+            cartaElemento.addEventListener('click', () => {
+                alert("Você olhou para a carta inimiga: " + cartaDado.nome + " com força " + cartaDado.forca);
+            });
+
+            maoInimigo.appendChild(cartaElemento);
+        });
+    </script>
+</body>
+</html>
